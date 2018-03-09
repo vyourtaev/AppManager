@@ -1,0 +1,15 @@
+Changes
+lib/AppManager.pm
+lib/AppManager/Check.pm
+lib/AppManager/Config.pm
+lib/AppManager/Deploy.pm
+lib/AppManager/Start.pm
+lib/AppManager/Stop.pm
+lib/AppManager/Undeploy.pm
+Makefile.PL
+MANIFEST			This list of files
+README
+t/00-load.t
+t/manifest.t
+t/pod-coverage.t
+t/pod.t
