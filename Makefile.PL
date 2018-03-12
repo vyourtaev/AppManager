@@ -1,4 +1,4 @@
-use 5.006;
+use v5.10;
 use strict;
 use warnings;
 use ExtUtils::MakeMaker;
@@ -10,7 +10,8 @@ WriteMakefile(
     ABSTRACT_FROM    => 'lib/AppManager.pm',
     LICENSE          => 'artistic_2',
     PL_FILES         => {},
-    MIN_PERL_VERSION => '5.006',
+    MIN_PERL_VERSION => '5.10',
+    EXE_FILES => [ qw( scripts/app-manager.pl ) ],
     CONFIGURE_REQUIRES => {
         'ExtUtils::MakeMaker' => '0',
     },
@@ -18,8 +19,9 @@ WriteMakefile(
         'Test::More' => '0',
     },
     PREREQ_PM => {
-        #'ABC'              => '1.6',
-        #'Foo::Bar::Module' => '5.0401',
+	'MooseX::Getopt' => '0.47',
+	'MooseX::SimpleConfig' => '0.02',
+	'REST::Client' => '272',
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES => 'AppManager-*' },

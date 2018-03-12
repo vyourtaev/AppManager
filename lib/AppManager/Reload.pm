@@ -1,12 +1,12 @@
-package AppManager::Config;
+package AppManager::Reload;
 
-use 5.006;
+use v5.10;
 use strict;
 use warnings;
 
 =head1 NAME
 
-AppManager::Config - The great new AppManager::Config!
+AppManager::Check - The great new AppManager::Check!
 
 =head1 VERSION
 
@@ -16,37 +16,27 @@ Version 0.01
 
 our $VERSION = '0.01';
 
-
-=head1 SYNOPSIS
-
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
-    use AppManager::Config;
-
-    my $foo = AppManager::Config->new();
-    ...
-
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
-
 =head1 SUBROUTINES/METHODS
 
-=head2 function1
+=head2 reload
+
+ perl app-manager.pl -a reload -n hello-world-web  --configfile script/app-manager.conf 
+
 
 =cut
 
-sub function1 {
-}
+sub reload {
+    my ($package, $self ) = @_;
 
-=head2 function2
+	my %fields = (
+	    path => sprintf("/%s", $self->name),
+	    update => "true",
+    );
 
-=cut
+    my $query_string = $self->{client}->buildQuery(%fields);
+    $self->{client}->GET('/manager/text/reload'.$query_string);
 
-sub function2 {
+    say $self->{client}->responseContent();
 }
 
 =head1 AUTHOR
@@ -66,7 +56,7 @@ automatically be notified of progress on your bug as I make changes.
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc AppManager::Config
+    perldoc AppManager::Check
 
 
 You can also look for information at:
@@ -137,5 +127,5 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 =cut
-
-1; # End of AppManager::Config
+# vim: ai ts=4 sts=4 et sw=4 ft=perl
+1; # End of AppManager::Check

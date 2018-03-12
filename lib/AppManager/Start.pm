@@ -1,8 +1,10 @@
 package AppManager::Start;
 
-use 5.006;
+use v5.10;
 use strict;
 use warnings;
+
+use Data::Dumper;
 
 =head1 NAME
 
@@ -19,35 +21,36 @@ our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
-    use AppManager::Start;
-
-    my $foo = AppManager::Start->new();
-    ...
 
 =head1 EXPORT
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+sub start
 
 =head1 SUBROUTINES/METHODS
 
-=head2 function1
+=head2 start
+
+    perl app-manager.pl -a start -n hello-world-web  --configfile script/app-manager.conf 
+
+    OK - Started application at context path /hello-world-web
 
 =cut
 
-sub function1 {
+sub start {
+    my ($package, $self ) = @_;
+
+	my %fields = (
+	    path => sprintf("/%s", $self->name),
+	    update => "true",
+    );
+
+    my $query_string = $self->{client}->buildQuery(%fields);
+    $self->{client}->GET('/manager/text/start'.$query_string);
+
+    say $self->{client}->responseContent();
+
 }
 
-=head2 function2
-
-=cut
-
-sub function2 {
-}
 
 =head1 AUTHOR
 
@@ -138,4 +141,5 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =cut
 
+# vim: ai ts=4 sts=4 et sw=4 ft=perl
 1; # End of AppManager::Start

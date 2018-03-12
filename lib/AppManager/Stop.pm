@@ -1,6 +1,6 @@
 package AppManager::Stop;
 
-use 5.006;
+use v5.10;
 use strict;
 use warnings;
 
@@ -19,35 +19,27 @@ our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
-    use AppManager::Stop;
-
-    my $foo = AppManager::Stop->new();
-    ...
-
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
 
 =head1 SUBROUTINES/METHODS
 
-=head2 function1
+=head2  stop
 
 =cut
 
-sub function1 {
+sub stop {
+    my ($package, $self ) = @_;
+
+	my %fields = (
+	    path => sprintf("/%s", $self->name),
+	    update => "true",
+    );
+
+    my $query_string = $self->{client}->buildQuery(%fields);
+    $self->{client}->GET('/manager/text/stop'.$query_string);
+
+    say $self->{client}->responseContent();
 }
 
-=head2 function2
-
-=cut
-
-sub function2 {
-}
 
 =head1 AUTHOR
 

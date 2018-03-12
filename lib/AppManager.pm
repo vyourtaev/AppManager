@@ -1,12 +1,105 @@
 package AppManager;
 
-use 5.006;
-use strict;
-use warnings;
+use v5.10;
+
+use REST::Client;
+
+require AppManager::Deploy;
+require AppManager::Undeploy;
+require AppManager::Reload;
+require AppManager::Start;
+require AppManager::Stop;
+require AppManager::Check;
+
+use Moose;
+
+with 'MooseX::SimpleConfig';
+with 'MooseX::Getopt';
+
+our $VERSION = '0.01';
+
+has 'hostname'        => ( 
+    is              => 'rw', 
+    isa             => 'Str',
+    traits          => ['Getopt'],
+    predicate       => 'has_hostname',
+    required        => 1,
+    cmd_aliases     => ['h'],
+    documentation   => 'hostname or IP',
+);
+
+has 'port'        => ( 
+    is              => 'rw', 
+    isa             => 'Str',
+    traits          => ['Getopt'],
+    predicate       => 'has_port',
+    required        => 1,
+    cmd_aliases     => ['p'],
+    documentation   => 'port',
+);
+
+has 'user'       => ( 
+    is          => 'rw', 
+    isa         => 'Str',
+    traits      => ['Getopt'],
+    predicate   => 'has_user',
+    required        => 1,
+    cmd_aliases => ['u'],
+    documentation => 'Username',
+);
+
+has 'passwd'       => ( 
+    is          => 'rw', 
+    isa         => 'Str',
+    traits      => ['Getopt'],
+    predicate   => 'has_passwd',
+    required        => 1,
+    cmd_aliases => ['P'],
+    documentation => 'Password',
+);
+
+has 'action'    => ( 
+    is          => 'rw', 
+    isa         => 'Str',
+    traits      => ['Getopt'],
+    predicate   => 'has_action',
+    required    => 1,
+    cmd_aliases => ['a'],
+    documentation => 'Action [deploy, undeploy, start, stop, reload, check]',
+);
+
+before 'action' => sub {
+    my ($self) = shift;
+    my $client = REST::Client->new();
+    my $host = sprintf("http://%s:%s@%s:%s",($self->user,$self->passwd,$self->hostname,$self->port));
+    $client->setHost($host);
+    $self->{client} = $client;
+};
+
+has 'name'       => ( 
+    is          => 'rw', 
+    isa         => 'Str',
+    traits      => ['Getopt'],
+    predicate   => 'has_name',
+    default     => 'manager',
+    required        => 0,
+    cmd_aliases => ['n'],
+    documentation => 'Application name',
+);
+
+has 'war'       => ( 
+    is          => 'rw', 
+    isa         => 'Str',
+    traits      => ['Getopt'],
+    predicate   => 'has_war',
+    required        => 0,
+    cmd_aliases => ['w'],
+    documentation => 'Application package war file',
+);
 
 =head1 NAME
 
-AppManager - The great new AppManager!
+AppManager - Simple Apache Tomcat Manager application!
 
 =head1 VERSION
 
@@ -14,40 +107,111 @@ Version 0.01
 
 =cut
 
-our $VERSION = '0.01';
-
-
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
+In many production environments, it is very useful to have the capability to deploy 
+a new web application, or undeploy an existing one, without having to shut down and 
+restart the entire container. In addition, you can request an existing application 
+to reload itself, even if you have not declared it to be reloadable in the 
+Tomcat server configuration file.  
 
     use AppManager;
 
-    my $foo = AppManager->new();
-    ...
+    my $app = AppManager->new();
+    $app->deploy('/path/to/war');
 
-=head1 EXPORT
+    $app->stop('webapps');
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+    $app->start('webapps');
+
+    $spp->undeploy('webapps');
+
 
 =head1 SUBROUTINES/METHODS
 
-=head2 function1
+=head2 deploy {
+    perl app-manager.pl -a deploy  -n hello-world-web -w hello-world-web/target/hello-world-web.war  --configfile script/app-manager.conf 
+
+    OK - Deployed application at context path /hello-world-web
+}
 
 =cut
 
-sub function1 {
+sub deploy {
+
+    my ($self) = shift;
+    AppManager::Deploy->deploy($self);
+
 }
 
-=head2 function2
+=head2 undeploy
+    --action undeploy ( undeployment of applicaton )
 
 =cut
 
-sub function2 {
+sub undeploy {
+
+    my ($self) = shift;
+    AppManager::Undeploy->undeploy($self);
+
 }
+
+=head2 reload
+
+    perl -Ilib script/app-manager.pl -a reload  -n hello-world-web  --configfile script/app-manager.conf 
+    OK - Reloaded application at context path /hello-world-web
+
+=cut
+
+sub reload {
+
+    my $self = shift;
+    AppManager::Reload->reload( $self );
+
+}
+
+=head2 start
+    perl app-manager.pl -a start -n hello-world-web  --configfile script/app-manager.conf 
+
+    OK - Started application at context path /hello-world-web
+=cut
+
+sub start {
+
+    my $self = shift;
+    AppManager::Start->start( $self );
+
+}
+
+=head2 stop
+
+=cut
+
+sub stop {
+
+    my $self = shift;
+    AppManager::Stop->stop( $self );
+
+}
+
+=head2 check 
+
+ perl app-manager.pl -a status -n hello-world-web  --configfile script/app-manager.conf 
+
+ OK - hello-world-web application for virtual host localhost
+
+ Context: /hello-world-web
+ Status: running
+ Sessions: 1
+ Name: hello-world-web
+
+=cut
+
+sub check {
+    my $self = shift;
+    AppManager::Check->check( $self );
+}
+
 
 =head1 AUTHOR
 
@@ -67,29 +231,6 @@ automatically be notified of progress on your bug as I make changes.
 You can find documentation for this module with the perldoc command.
 
     perldoc AppManager
-
-
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker (report bugs here)
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=AppManager>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/AppManager>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/AppManager>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/AppManager/>
-
-=back
 
 
 =head1 ACKNOWLEDGEMENTS
@@ -137,5 +278,5 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 =cut
-
+# vim: ai ts=4 sts=4 et sw=4 ft=perl
 1; # End of AppManager

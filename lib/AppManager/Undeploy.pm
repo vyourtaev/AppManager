@@ -1,6 +1,6 @@
 package AppManager::Undeploy;
 
-use 5.006;
+use v5.10;
 use strict;
 use warnings;
 
@@ -19,34 +19,25 @@ our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
-    use AppManager::Undeploy;
-
-    my $foo = AppManager::Undeploy->new();
-    ...
-
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
 
 =head1 SUBROUTINES/METHODS
 
-=head2 function1
+=head2 undeploy 
 
 =cut
 
-sub function1 {
-}
+sub undeploy {
+    my ($package, $self ) = @_;
 
-=head2 function2
+	my %fields = (
+	    path => sprintf("/%s", $self->name),
+	    update => "true",
+    );
 
-=cut
+    my $query_string = $self->{client}->buildQuery(%fields);
+    $self->{client}->GET('/manager/text/undeploy'.$query_string);
 
-sub function2 {
+    say $self->{client}->responseContent();
 }
 
 =head1 AUTHOR

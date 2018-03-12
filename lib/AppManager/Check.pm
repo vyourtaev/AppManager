@@ -1,6 +1,6 @@
 package AppManager::Check;
 
-use 5.006;
+use v5.10;
 use strict;
 use warnings;
 
@@ -16,37 +16,34 @@ Version 0.01
 
 our $VERSION = '0.01';
 
-
-=head1 SYNOPSIS
-
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
-    use AppManager::Check;
-
-    my $foo = AppManager::Check->new();
-    ...
-
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
-
 =head1 SUBROUTINES/METHODS
 
-=head2 function1
+=head2 status
+
+ perl app-manager.pl -a status -n hello-world-web  --configfile script/app-manager.conf 
+
+ OK - hello-world-web application for virtual host localhost
+
+ Context: /hello-world-web
+ Status: running
+ Sessions: 1
+ Name: hello-world-web
 
 =cut
 
-sub function1 {
-}
+sub check{
+    my($package, $self) = @_;
+    my $name = $self->name;
 
-=head2 function2
+    $self->{client}->GET('/manager/text/list');
+    my $response = $self->{client}->responseContent();
 
-=cut
+    my ($context, $state, $sessions, $app) = split /:/,  join('', grep {/$name/} split /\n/, $response);
 
-sub function2 {
+    $context? say "Context: $context": say "Context: Not found";
+    $state ? say "Status: $state": say "Status: Not defined";
+    $sessions ? say "Sessions: $sessions": say "Sessions: 0";
+    $app ? say "Name: $app": say "Application $name not installed";
 }
 
 =head1 AUTHOR
@@ -137,5 +134,5 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 =cut
-
+# vim: ai ts=4 sts=4 et sw=4 ft=perl
 1; # End of AppManager::Check

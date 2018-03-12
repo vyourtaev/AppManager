@@ -1,8 +1,12 @@
 package AppManager::Deploy;
 
-use 5.006;
+use v5.10;
 use strict;
 use warnings;
+
+use File::Slurp;
+use File::Spec;
+use Data::Dumper;
 
 =head1 NAME
 
@@ -16,30 +20,30 @@ Version 0.01
 
 our $VERSION = '0.01';
 
-
-=head1 SYNOPSIS
-
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
-
-    use AppManager::Deploy;
-
-    my $foo = AppManager::Deploy->new();
-    ...
-
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
-
 =head1 SUBROUTINES/METHODS
 
-=head2 function1
+=head2 deploy
+
+perl app-manager.pl -a deploy  -n hello-world-web -w hello-world-web/target/hello-world-web.war  --configfile script/app-manager.conf 
+
+OK - Deployed application at context path /hello-world-web
 
 =cut
 
-sub function1 {
+sub deploy {
+    my ($package, $self ) = @_;
+
+	my %fields = (
+	    path => sprintf("/%s", $self->name),
+	    update => "true",
+    );
+
+    my $query_string = $self->{client}->buildQuery(%fields);
+    my $war_path = $self->war;
+
+    my $war_content = read_file( File::Spec->rel2abs($war_path), binmode => ':raw' , scalar_ref => 1 );
+
+    say $self->{client}->PUT("/manager/text/deploy".$query_string, $$war_content)->responseContent();
 }
 
 =head2 function2
@@ -138,4 +142,5 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =cut
 
+# vim: ai ts=4 sts=4 et sw=4 ft=perl
 1; # End of AppManager::Deploy
