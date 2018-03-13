@@ -8,19 +8,42 @@ on the next functionality and includes the next steps:
 includes folder hello-world-web with a smale Hello World Maven project 
 with hello-world-web.war 
 
+perl app-manager.pl -a deploy  -n hello-world-web -w hello-world-web/target/hello-world-web.war  --configfile script/app-manager.conf 
+ OK - Deployed application at context path /hello-world-web
+
 2. Undeploy before deployied web applicaition
+
+perl -Ilib script/app-manager.pl -a undeploy  -n hello-world-web  --configfile script/app-manager.conf 
+ OK - Undeployed application at context path /hello-world-web
 
 3. Reload before deployed web application
 
+perl -Ilib script/app-manager.pl -a reload  -n hello-world-web  --configfile script/app-manager.conf
+ OK - Reloaded application at context path /hello-world-web
+
 4. Stop web application
 
-5. Start web applicaiton
+perl app-manager.pl -a start -n hello-world-web  --configfile script/app-manager.conf
+ OK - Started application at context path /hello-world-web
+
+5. Start web applicaiton 
+
+perl app-manager.pl -a stop  -n hello-world-web  --configfile script/app-manager.conf 
+ OK - Stopped application at context path /hello-world-web
 
 6. Check status web application
+perl app-manager.pl -a status -n hello-world-web  --configfile script/app-manager.conf 
+
+     OK - hello-world-web application for virtual host localhost
+
+     Context: /hello-world-web
+     Status: running
+     Sessions: 1
+     Name: hello-world-web
 
 AppManager is a class applicaton written with Moose.
 
-Configuration implemented by dual way, used configuration file and 
+Configuration implemented in dual way, used configuration file and 
 commad line arguments. Command line arguments have advantages.
 
 Module created as standard CPAN compatable archive, and processed 
