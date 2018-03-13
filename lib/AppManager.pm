@@ -68,14 +68,6 @@ has 'action'    => (
     documentation => 'Action [deploy, undeploy, start, stop, reload, check]',
 );
 
-before 'action' => sub {
-    my ($self) = shift;
-    my $client = REST::Client->new();
-    my $host = sprintf("http://%s:%s@%s:%s",($self->user,$self->passwd,$self->hostname,$self->port));
-    $client->setHost($host);
-    $self->{client} = $client;
-};
-
 has 'name'       => ( 
     is          => 'rw', 
     isa         => 'Str',
@@ -96,6 +88,22 @@ has 'war'       => (
     cmd_aliases => ['w'],
     documentation => 'Application package war file',
 );
+
+has 'client'    => ( 
+    is          => 'ro', 
+    isa         => 'REST::Client',
+    required    => 1,
+    builder     => 'get_client',
+);
+
+sub get_client {
+    my ($self) = shift;
+    my $client = REST::Client->new();
+    my $host = sprintf("http://%s:%s@%s:%s",($self->user,$self->passwd,$self->hostname,$self->port));
+    $client->setHost($host);
+    $self->{client} = $client;
+};
+
 
 =head1 NAME
 
@@ -118,18 +126,18 @@ Tomcat server configuration file.
     use AppManager;
 
     my $app = AppManager->new();
-    $app->deploy('/path/to/war');
+    $app->deploy();
+    ..
 
-    $app->stop('webapps');
-
-    $app->start('webapps');
-
-    $spp->undeploy('webapps');
-
+    my $app = AppManager->new_with_options();
+    $app->start();
+    $app->stop()
+    ..
 
 =head1 SUBROUTINES/METHODS
 
 =head2 deploy {
+
     perl app-manager.pl -a deploy  -n hello-world-web -w hello-world-web/target/hello-world-web.war  --configfile script/app-manager.conf 
 
     OK - Deployed application at context path /hello-world-web
@@ -138,60 +146,65 @@ Tomcat server configuration file.
 =cut
 
 sub deploy {
-
     my ($self) = shift;
-    AppManager::Deploy->deploy($self);
 
+    AppManager::Deploy->deploy($self);
 }
 
 =head2 undeploy
-    --action undeploy ( undeployment of applicaton )
+
+ perl -Ilib script/app-manager.pl -a undeploy  -n hello-world-web  --configfile script/app-manager.conf 
+
+ OK - Undeployed application at context path /hello-world-web
 
 =cut
 
 sub undeploy {
-
     my ($self) = shift;
-    AppManager::Undeploy->undeploy($self);
 
+    AppManager::Undeploy->undeploy($self);
 }
 
 =head2 reload
 
-    perl -Ilib script/app-manager.pl -a reload  -n hello-world-web  --configfile script/app-manager.conf 
-    OK - Reloaded application at context path /hello-world-web
+  perl -Ilib script/app-manager.pl -a reload  -n hello-world-web  --configfile script/app-manager.conf 
+
+  OK - Reloaded application at context path /hello-world-web
 
 =cut
 
 sub reload {
-
     my $self = shift;
-    AppManager::Reload->reload( $self );
 
+    AppManager::Reload->reload( $self );
 }
 
 =head2 start
-    perl app-manager.pl -a start -n hello-world-web  --configfile script/app-manager.conf 
 
-    OK - Started application at context path /hello-world-web
+ perl app-manager.pl -a start -n hello-world-web  --configfile script/app-manager.conf 
+
+ OK - Started application at context path /hello-world-web
+
 =cut
 
 sub start {
-
     my $self = shift;
-    AppManager::Start->start( $self );
 
+    AppManager::Start->start( $self );
 }
 
 =head2 stop
 
+ perl app-manager.pl -a stop  -n hello-world-web  --configfile script/app-manager.conf 
+
+ OK - Stopped application at context path /hello-world-web
+
 =cut
 
 sub stop {
-
     my $self = shift;
-    AppManager::Stop->stop( $self );
 
+    AppManager::Stop->stop( $self );
 }
 
 =head2 check 
@@ -209,6 +222,7 @@ sub stop {
 
 sub check {
     my $self = shift;
+
     AppManager::Check->check( $self );
 }
 

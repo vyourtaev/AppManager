@@ -10,8 +10,8 @@ WriteMakefile(
     ABSTRACT_FROM    => 'lib/AppManager.pm',
     LICENSE          => 'artistic_2',
     PL_FILES         => {},
-    MIN_PERL_VERSION => '5.10',
-    EXE_FILES => [ qw( scripts/app-manager.pl ) ],
+    MIN_PERL_VERSION => 'v5.10',
+    # EXE_FILES => [ qw( scripts/app-manager.pl ) ],
     CONFIGURE_REQUIRES => {
         'ExtUtils::MakeMaker' => '0',
     },

@@ -53,10 +53,10 @@ TODO: {
   module_boilerplate_ok('lib/AppManager.pm');
   module_boilerplate_ok('lib/AppManager/Deploy.pm');
   module_boilerplate_ok('lib/AppManager/Undeploy.pm');
+  module_boilerplate_ok('lib/AppManager/Reload.pm');
   module_boilerplate_ok('lib/AppManager/Start.pm');
   module_boilerplate_ok('lib/AppManager/Stop.pm');
   module_boilerplate_ok('lib/AppManager/Check.pm');
-  module_boilerplate_ok('lib/AppManager/Config.pm');
 
 
 }

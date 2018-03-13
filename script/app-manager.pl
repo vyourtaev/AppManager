@@ -4,10 +4,6 @@ use strict;
 use warnings;
 use v5.10;
 
-use REST::Client;
-use File::Slurp;
-use LWP::UserAgent;
-
 use AppManager;
 
 my $app = AppManager->new_with_options();

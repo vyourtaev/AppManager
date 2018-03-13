@@ -2,11 +2,14 @@ use strict;
 use warnings;
 use v5.10;
 
-use Test::More tests => 3;
+use Test::More tests => 2;
+
+use Data::Dumper;
 
 use AppManager;
+use AppManager::Check;
 
-my $bar = AppManager->new(
+my $app = AppManager->new_with_options(
     action => 'deploy',
     name   => 'hello-world-web',
     war => 'hello-world-web/target/hello-world-web.war',
@@ -17,7 +20,9 @@ my $bar = AppManager->new(
     configfile => 'script/app-manager.conf',
 );
 
-isa_ok($bar, 'AppManager');
+isa_ok($app, 'AppManager');
 
-is($bar->name('tomcat'), 'tomcat', 'setter');
-is($bar->name, 'tomcat', 'getter');
+ok $app->check();
+
+
+# vim: ai ts=4 sts=4 et sw=4 ft=perl

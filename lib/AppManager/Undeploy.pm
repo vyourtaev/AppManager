@@ -24,6 +24,10 @@ our $VERSION = '0.01';
 
 =head2 undeploy 
 
+    perl app-manager.pl -a deploy  -n hello-world-web -w hello-world-web/target/hello-world-web.war  --configfile script/app-manager.conf 
+
+    OK - Deployed application at context path /hello-world-web
+
 =cut
 
 sub undeploy {

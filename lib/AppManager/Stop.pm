@@ -24,6 +24,10 @@ our $VERSION = '0.01';
 
 =head2  stop
 
+	perl app-manager.pl -a stop  -n hello-world-web  --configfile script/app-manager.conf 
+
+	OK - Stopped application at context path /hello-world-web
+
 =cut
 
 sub stop {
