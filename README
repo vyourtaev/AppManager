@@ -1,16 +1,36 @@
 AppManager
 
-The README is used to introduce the module and provide instructions on
-how to install the module, any machine dependencies it may have (for
-example C compilers and installed libraries) and any other information
-that should be provided before the module is installed.
+it is a perl module implemented for using with  command-line utility that
+allows remotely manage a Tomcat web server. Full pipeline based 
+on the next functionality and includes the next steps: 
 
-A README file is required for CPAN modules since CPAN extracts the README
-file from a module distribution so that people browsing the archive
-can use it to get an idea of the module's uses. It is usually a good idea
-to provide version information here so that people can decide whether
-fixes for the module are worth downloading.
+1. Deployment java war aka web archive. For testing purpose repository
+includes folder hello-world-web with a smale Hello World Maven project 
+with hello-world-web.war 
 
+2. Undeploy before deployied web applicaition
+
+3. Reload before deployed web application
+
+4. Stop web application
+
+5. Start web applicaiton
+
+6. Check status web application
+
+AppManager is a class applicaton written with Moose.
+
+Configuration implemented by dual way, used configuration file and 
+commad line arguments. Command line arguments have advantages.
+
+Module created as standard CPAN compatable archive, and processed 
+standard way. Deatailed documentaion available 
+
+	perldoc AppManager
+
+Just as an  example of usage:
+
+perl -Ilib script/app-manager.pl -a undeploy  -n hello-world-web  --configfile script/app-manager.conf
 
 INSTALLATION
 
@@ -27,20 +47,6 @@ After installing, you can find documentation for this module with the
 perldoc command.
 
     perldoc AppManager
-
-You can also look for information at:
-
-    RT, CPAN's request tracker (report bugs here)
-        http://rt.cpan.org/NoAuth/Bugs.html?Dist=AppManager
-
-    AnnoCPAN, Annotated CPAN documentation
-        http://annocpan.org/dist/AppManager
-
-    CPAN Ratings
-        http://cpanratings.perl.org/d/AppManager
-
-    Search CPAN
-        http://search.cpan.org/dist/AppManager/
 
 
 LICENSE AND COPYRIGHT
