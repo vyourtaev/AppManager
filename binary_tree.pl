@@ -37,11 +37,6 @@ sub _build_child_tree {
 	return BinaryTree->new( parent => $self );
 }
 
-sub treePathSum {
-	my ( $root, $val) = @_;
-
-}
-
 sub traverse {
 	my $self = shift;
 	if ( $self ) {
